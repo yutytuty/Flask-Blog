@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    {% for post in posts %}
+    <h1>{{ post["title"] }}</h1>
+    <h5>{{ post["author"] }}</h5>
+    <h3> {{ post["content"] }} </h3>
+    <hr>
+    <br><br>
+    {%endfor%}
+</body>
+</html>
