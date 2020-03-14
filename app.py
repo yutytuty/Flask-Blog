@@ -1,7 +1,9 @@
-from flask import Flask, render_template, request, url_for, redirect
+from flask import Flask, render_template, request, url_for, redirect, session
 from pymongo import MongoClient
 
 app = Flask(__name__)
+
+app.secret_key = b'\x9bBZe\xc7\xa3r\x18\x9d\xdd'
 
 client = MongoClient("localhost", 27017)
 
@@ -12,7 +14,10 @@ users = db.users
 @app.route("/")
 @app.route("/home")
 def home():
-    return render_template("home.html")
+    username = "you are not logged in"
+    if "username" in session:
+        username = session["username"]
+    return render_template("home.html", username=username)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -24,6 +29,7 @@ def login():
         user = users.find_one( {"_id":username} )
         if user != None:
             if user["password"] == password:
+                session["username"] = username
                 return "success"
 
             else:
@@ -48,4 +54,5 @@ def hub():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0")
+    #TODO: add ip number when hosting other computers
+    app.run(debug=True)
