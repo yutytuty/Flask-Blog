@@ -41,6 +41,15 @@ def login():
     return render_template("login.html")
 
 
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "POST":
+        data = request.form
+        new_username = data["username"]
+        new_password = data["password"]
+        users.insert_one( { "_id":new_username, "username":new_username, "password":new_password, "posts": {} } )
+    return render_template("register.html")
+
 @app.route("/hub")
 def hub():
     posts = []
@@ -55,4 +64,4 @@ def hub():
 
 if __name__ == "__main__":
     #TODO: add ip number when hosting other computers
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0")
