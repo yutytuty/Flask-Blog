@@ -30,7 +30,7 @@ def login():
         if user != None:
             if user["password"] == password:
                 session["username"] = username
-                return "success"
+                return redirect(url_for("post"))
 
             else:
                 return "invalid username or passowrd"
@@ -47,7 +47,12 @@ def register():
         data = request.form
         new_username = data["username"]
         new_password = data["password"]
-        users.insert_one( { "_id":new_username, "username":new_username, "password":new_password, "posts": {} } )
+        if users.find({"_id":new_username}).count() == 0:
+            users.insert_one( { "_id":new_username, "username":new_username, "password":new_password, "posts": [] } )
+            return redirect(url_for("home"))
+
+        return "Username already taken"
+
     return render_template("register.html")
 
 @app.route("/hub")
@@ -58,10 +63,33 @@ def hub():
         for post in user["posts"]:
             posts.append(post)
 
-    print(posts)
     return render_template("hub.html", posts=posts)
+
+@app.route("/post", methods=["GET", "POST"])
+def post():
+    if "username" not in session:
+        return redirect("/login")
+
+    if request.method == "POST":
+        data = request.form
+        title = data["title"]
+        content = data["content"]
+        author = session["username"]
+        posts = users.find_one({"_id":author})["posts"]
+        posts.append({"title":title, "author":author, "content":content})
+        users.update_one({"_id":author}, {"$set":{"posts":posts}})
+
+    return render_template("post.html")
+
+
+@app.route("/logout")
+def logout():
+    if "username" in session:
+        session.pop("username")
+        return redirect(url_for("home"))
+
+    return redirect(url_for("home"))
 
 
 if __name__ == "__main__":
-    #TODO: add ip number when hosting other computers
     app.run(debug=True, host="0.0.0.0")

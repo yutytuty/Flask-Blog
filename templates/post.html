@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" type="text/css" href="url_for('static', 'styles.css')">
+    <link rel="stylesheet" type="text/css" href="url_for(styles.css')">
 </head>
 
 <body>
-    <form action="url_for('/post')" method="POST" autocomplete="off">
-        <input type="text" value="Title" name="Title">
+    <form action="/post" method="POST" autocomplete="off" id="post">
+        <input type="text" placeholder="Title" name="title">
+        <br>
+        <textarea placeholder="Content" form="post" name="content"></textarea>
         <br><br>
-        <input type="text" value="content" name="content">
-        <br><br><br><br>
         <input type="submit" value="submit">
     </form>
 </body>
