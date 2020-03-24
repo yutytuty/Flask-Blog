@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, url_for, redirect, session
 from pymongo import MongoClient
+import subprocess
 
 app = Flask(__name__)
 
@@ -78,6 +79,7 @@ def post():
         posts = users.find_one({"_id":author})["posts"]
         posts.append({"title":title, "author":author, "content":content})
         users.update_one({"_id":author}, {"$set":{"posts":posts}})
+        return redirect("home")
 
     return render_template("post.html")
 
@@ -92,4 +94,5 @@ def logout():
 
 
 if __name__ == "__main__":
+    subprocess.Popen(["mongod"])
     app.run(debug=True, host="0.0.0.0")
